@@ -5,7 +5,7 @@ const Persons = ({data}) => {
     <div>
       {
         data.map((person, i) =>
-          <p key={i}>{person.name}:  {person.phoneNumber}</p>
+          <p key={i}>{person.name}:  {person.number}</p>
         )
       }
     </div>

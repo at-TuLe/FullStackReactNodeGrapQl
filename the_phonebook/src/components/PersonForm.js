@@ -8,7 +8,7 @@ const App = ({onAddNewPerson}) => {
     event.preventDefault()
     const newPerson = {
       name: newName,
-      phoneNumber: newPhoneNumber
+      number: newPhoneNumber
     }
 
     onAddNewPerson(newPerson)
