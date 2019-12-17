@@ -6,15 +6,18 @@ const App = ({onAddNewPerson}) => {
 
   const submit = (event) => {
     event.preventDefault()
-    const newPerson = {
-      name: newName,
-      number: newPhoneNumber
+    if (!newName || !newPhoneNumber) {
+      alert(`please enter name and number!`);
+    }else {
+      const newPerson = {
+        name: newName,
+        number: newPhoneNumber
+      }
+  
+      onAddNewPerson(newPerson)
+      setNewName('');
+      setNewPhoneNumber('');
     }
-
-    onAddNewPerson(newPerson)
-    alert(`${newName} is added to phonebooks`);
-    setNewName('');
-    setNewPhoneNumber('');
   }
 
   const handleChangeNewName = (event) => {
@@ -32,7 +35,7 @@ const App = ({onAddNewPerson}) => {
           name: <input value={newName} onChange={handleChangeNewName}/>
         </div>
         <div>
-          phone number: <input value={newPhoneNumber} onChange={handleChangeNewPhoneNumber}/>
+          phone number: <input value={newPhoneNumber} onChange={handleChangeNewPhoneNumber} type="number"/>
         </div>
         <div>
           <button type="submit">add</button>
