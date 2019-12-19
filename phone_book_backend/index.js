@@ -16,6 +16,7 @@ const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 app.use(bodyParser.json())
+app.use(express.static('build'))
 // app.use(requestLogger)
 // app.use(unknownEndpoint)
 
@@ -73,8 +74,6 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/persons', (req, res) => {
-  morgan(':method :url :status :res[content-length] - :response-time ms')
-  app.use(morgan);
   res.json(persons)
 })
 
