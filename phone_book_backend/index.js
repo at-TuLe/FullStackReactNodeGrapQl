@@ -113,8 +113,8 @@ app.delete('/persons/:id', (request, response) => {
   response.status(204).end()
 })
 
-app.disable('etag');
-const PORT = 3001
+app.disable('etag')
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
