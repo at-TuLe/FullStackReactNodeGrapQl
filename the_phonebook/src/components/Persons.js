@@ -1,11 +1,15 @@
 import React from 'react'
 
-const Persons = ({data}) => {
+const Persons = ({data, onDelete}) => {
+
   return (
     <div>
       {
-        data.map((person, i) =>
-          <p key={i}>{person.name}:  {person.phoneNumber}</p>
+        data.map((person) =>
+          <div  key={person.id}>
+            {person.name}:  {person.number}
+            <button onClick={() => onDelete(person)}>Delete</button>
+          </div>
         )
       }
     </div>
