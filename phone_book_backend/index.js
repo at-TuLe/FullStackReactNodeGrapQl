@@ -1,5 +1,6 @@
 const express = require('express')
-// import express from 'express'
+const Person = require('./models/person')
+require('dotenv').config()
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 morgan('tiny')
@@ -18,7 +19,6 @@ const unknownEndpoint = (request, response) => {
 app.use(bodyParser.json())
 app.use(express.static('build'))
 // app.use(requestLogger)
-// app.use(unknownEndpoint)
 
 
 let persons = [
@@ -63,57 +63,56 @@ const getMissingErrors = (person) => {
   }
 }
 
-app.get('/', (req, res) => {
+app.get('/api/', (req, res) => {
   res.send('<h1>Hello World!</h1>')
 })
 
-app.get('/info', (req, res) => {
+app.get('/api/info', (req, res) => {
   let result = `<h1>Phone book has info for ${persons.length}</h1>`;
   result += `<div>${new Date()}</>`
   res.send(result)
 })
 
-app.get('/persons', (req, res) => {
-  res.json(persons)
+app.get('/api/persons', (req, res) => {
+  Person.find({}).then(persons => {
+    response.json(persons.toJSON())
+  })
 })
 
-app.post('/persons', (req, res) => {
-  const maxId = persons.length > 0
-  ? Math.max(...persons.map(n => n.id)) 
-  : 0
+app.post('/api/persons', (req, res) => {
+  const body = req.body
 
-  const person = req.body
-  const errors = getMissingErrors(person)
-  if (!!errors) {
-    return response.status(400).json({ 
-      error: errors 
-    })
+  if (body.content === undefined) {
+    return res.status(400).json({ error: 'content missing' })
   }
-  person.id = maxId + 1
-  persons = persons.concat(person)
 
-  res.json(person)
+  const person = new Person({
+    name: body.name,
+    number: body.number
+  })
+
+  person.save().then(savedPerson => {
+    res.json(savedPerson.toJSON())
+  })
 })
 
-app.get('/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const note = persons.find(note => note.id === id)
-  if (note) {
-      response.json(note)
-    } else {
-      response.status(404).end()
-  }
+app.get('/api/persons/:id', (request, response) => {
+  Person.findById(request.params.id).then(person => {
+    response.json(person.toJSON())
+  })
 })
 
-app.delete('/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
   persons = persons.filter(note => note.id !== id)
 
   response.status(204).end()
 })
 
+app.use(unknownEndpoint)
+
 app.disable('etag')
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
