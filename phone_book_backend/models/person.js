@@ -1,5 +1,6 @@
 require('dotenv').config()
 const mongoose = require('mongoose')
+mongoose.set('useFindAndModify', false)
 
 const url = process.env.MONGODB_URI
 
@@ -14,8 +15,15 @@ mongoose.connect(url, { useNewUrlParser: true })
   })
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    required: true
+  },
+  number: {
+    type: String,
+    minlength: 5,
+    required: true
+  },
 })
 
 personSchema.set('toJSON', {
