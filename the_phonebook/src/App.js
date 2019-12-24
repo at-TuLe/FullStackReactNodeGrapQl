@@ -22,6 +22,9 @@ const App = () => {
         console.log(response)
         setPersons(response)
       })
+      .catch(error => {
+        console.log(error.response.data)
+      })
   }
 
   const addNewPerson = (newPerson) => {
@@ -35,6 +38,15 @@ const App = () => {
           alert(`${response.name} is added to phonebooks`);
           setFilterValue('');
         })
+        .catch(error => {
+          console.log(error.response.data)
+          setErrorMessage(
+            error.response.data
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 2000)
+        })
     } else {
       const ok = window.confirm(`${newPerson.name} is alredy added. Do you want to replace old number?`);
       if (ok) {
@@ -43,6 +55,15 @@ const App = () => {
         .then(() => {
           getAll();
           setFilterValue('');
+        })
+        .catch(error => {
+          console.log(error.response.data)
+          setErrorMessage(
+            error.response.data
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 2000)
         })
       }
     }

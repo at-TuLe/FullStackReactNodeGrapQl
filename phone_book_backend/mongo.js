@@ -1,12 +1,13 @@
+/* global require */
 const mongoose = require('mongoose')
 require('dotenv').config()
 
-if ( process.argv.length<3 ) {
-  console.log('give password as argument')
-  process.exit(1)
-}
+// if ( process.argv.length<3 ) {
+//   console.log('give password as argument')
+//   process.exit(1)
+// }
 
-const url =process.env.MONGODB_URI
+const url = process.env.MONGODB_URI
 
 mongoose.connect(url, { useNewUrlParser: true })
 

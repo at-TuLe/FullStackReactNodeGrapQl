@@ -1,3 +1,4 @@
+/* global require */
 const express = require('express')
 const cors = require('cors')
 
@@ -76,6 +77,7 @@ app.get('/api/persons', (req, res, next) => {
 
 app.post('/api/persons', (req, res, next) => {
   const body = req.body
+  console.log(body)
   app.use(checkMissingErrors)
   const person = new Person({
     name: body.name,
@@ -96,7 +98,7 @@ app.put('/api/persons/:id', (req, res, next) => {
     name: body.name,
     number: body.number
   }
-  Person.findByIdAndUpdate(req.params.id, person, { new: true }).then(updatedPerson => {
+  Person.findByIdAndUpdate(req.params.id, person, { new: false }).then(updatedPerson => {
     res.json(updatedPerson)
   }).catch(error => next(error))
 })
@@ -107,11 +109,12 @@ app.get('/api/persons/:id', (req, res, next) => {
   }).catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  persons = persons.filter(note => note.id !== id)
-
-  res.status(204).end()
+app.delete('/api/persons/:id', (req, res, next) => {
+  Person.findByIdAndRemove(req.params.id)
+  .then(deletedPerson => 
+    res.json(deletedPerson.toJSON())
+  )
+  .catch(error => next(error))
 })
 
 app.use(unknownEndpoint)
