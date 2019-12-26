@@ -1,5 +1,7 @@
 const personsRouter = require('express').Router()
 const Person = require('../models/person')
+const User = require('../models/user')
+
 
 personsRouter.get('/', (req, res, next) => {
   Person.find({}).then(persons => {
@@ -7,17 +9,24 @@ personsRouter.get('/', (req, res, next) => {
   }).catch(error => next(error))
 })
 
-personsRouter.post('/', (req, res, next) => {
+personsRouter.post('/', async (req, res, next) => {
   const body = req.body
 
+  const user = await User.findById(body.userId)
   const person = new Person({
     name: body.name,
-    number: body.number
+    number: body.number,
+    user: user._id
   })
-
-  person.save().then(savedPerson => {
-    res.json(savedPerson.toJSON())
-  }).catch(error => next(error))
+  try{
+    const savedPerson = await person.save()
+    user.persons = user.persons.concat(savedPerson._id)
+    await user.save()
+    res.json(savedPerson.toJSON()) 
+  }
+  catch(error) {
+    next(error)
+  }
 })
 
 personsRouter.put('/:id', (req, res, next) => {

@@ -13,6 +13,10 @@ const personSchema = new mongoose.Schema({
     minlength: 5,
     required: true
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
 })
 
 personSchema.plugin(uniqueValidator)

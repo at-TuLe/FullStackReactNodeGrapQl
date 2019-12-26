@@ -4,6 +4,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const app = express()
 const personsRouter = require('./controllers/persons')
+const usersRouter = require('./controllers/users')
 const middleware = require('./utils/middleware')
 const config = require('./utils/config')
 const mongoose = require('mongoose')
@@ -25,9 +26,9 @@ app.use(bodyParser.json())
 app.use(express.static('build'))
 app.use(cors())
 app.use('/api/persons', personsRouter)
+app.use('/api/users', usersRouter)
 
 app.use(middleware.requestLogger)
-
 app.use(unknownEndpoint)
 
 app.use(middleware.unknownEndpoint)
