@@ -5,14 +5,27 @@ import Persons from './components/Persons'
 import personService from './services/Person'
 import Notification from './services/Notification'
 import './index.css'
+import loginService from './services/login' 
 
 const App = () => {
   const [ persons, setPersons] = useState([]);
   const [ filterValue, setFilterValue ] = useState('')
   const [ errorMessage, setErrorMessage ] = useState(null)
+  const [ username, setUsername ] = useState('') 
+  const [ password, setPassword ] = useState('')
+  const [user, setUser] = useState(null)
 
   useEffect(() => {
     getAll();
+  }, [])
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedPersonAppUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      personService.setToken(user.token)
+    }
   }, [])
 
   const getAll = () => {
@@ -95,10 +108,58 @@ const App = () => {
   }
   const showPersons = persons.filter(person => person.name.includes(filterValue))
 
+  const handleLogin = async (event) => {
+    event.preventDefault()
+    try {
+      const user = await loginService.login({
+        username, password
+      })
+      personService.setToken(user.token)
+      window.localStorage.setItem(
+        'loggedPersonAppUser', JSON.stringify(user)
+      )
+      setUser(user)
+      setUsername('')
+      setPassword('')
+    } catch (exception) {
+      setErrorMessage('Wrong credentials')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
+
+  const loginForm = () => (
+    <form onSubmit={handleLogin}>
+      <div>
+        username
+          <input
+          type="text"
+          value={username}
+          name="Username"
+          onChange={({ target }) => setUsername(target.value)}
+        />
+      </div>
+      <div>
+        password
+          <input
+          type="password"
+          value={password}
+          name="Password"
+          onChange={({ target }) => setPassword(target.value)}
+        />
+      </div>
+      <button type="submit">login</button>
+    </form>      
+  )
+
+
   return (
     <div>
+
       <h1>Phonebook</h1>
       <Notification message={errorMessage} />
+      {user === null && loginForm()}
 
       <Filter searchWord={filterValue} handleFilter={handleChangeFilterValue} />
       <h1>Add a new</h1>
